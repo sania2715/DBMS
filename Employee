@@ -1,0 +1,360 @@
+//Consider following Relation 
+Employee(emp_id,employee_name,street,city)
+Works(employee_name,company_name,salary)
+Company(company_name,city)
+Manages(employee_name,manager_name)
+Create above tables with appropriate constraints like primary key, foreign key, not null etc. 
+
+SQL QUERIES:
+
+//CREATING DATABASE
+
+CREATE DATABASE COM;
+USE COM;
+
+//CREATING TABLES
+
+CREATE TABLE Employee(Emp_id VARCHAR(20),Emp_name VARCHAR(20),Street VARCHAR(20),City VARCHAR(20));
+CREATE TABLE Works(Emp_name VARCHAR(20),Company_name VARCHAR(20),Salary INTEGER(40));
+CREATE TABLE Company(Company_name VARCHAR(20),City VARCHAR(20));
+CREATE TABLE Manages(Emp_name VARCHAR(20),Manager_name VARCHAR(20));
+
+//ADDING PRIMARY KEY AND FOREIGN KEY
+
+ALTER TABLE Employee ADD PRIMARY KEY(Emp_id);
+ALTER TABLE Company ADD PRIMARY KEY(Company_name);
+ALTER TABLE Works ADD PRIMARY KEY(Emp_name);
+ALTER TABLE Manages ADD PRIMARY KEY(Manager_name);
+
+ALTER TABLE Employee ADD FOREIGN KEY(Emp_name) REFERENCES Works(Emp_name);
+ALTER TABLE Works ADD FOREIGN KEY(Company_name) REFERENCES Company(Company_name);
+ALTER TABLE Manages ADD FOREIGN KEY(Emp_name) REFERENCES Works(Emp_name);
+
+//TABLE STRUCTURE
+
+DESCRIBE Employee
++----------+-------------+------+-----+---------+-------+
+| Field    | Type        | Null | Key | Default | Extra |
++----------+-------------+------+-----+---------+-------+
+| Emp_id   | varchar(20) | NO   | PRI | NULL    |       |
+| Emp_name | varchar(20) | YES  |     | NULL    |       |
+| Street   | varchar(20) | YES  |     | NULL    |       |
+| City     | varchar(20) | YES  |     | NULL    |       |
++----------+-------------+------+-----+---------+-------+
+
+ DESCRIBE Works;
++--------------+-------------+------+-----+---------+-------+
+| Field        | Type        | Null | Key | Default | Extra |
++--------------+-------------+------+-----+---------+-------+
+| Emp_name     | varchar(20) | NO   | PRI | NULL    |       |
+| Company_name | varchar(20) | YES  | MUL | NULL    |       |
+| Salary       | int         | YES  |     | NULL    |       |
++--------------+-------------+------+-----+---------+-------+
+
+DESCRIBE Company;
++--------------+-------------+------+-----+---------+-------+
+| Field        | Type        | Null | Key | Default | Extra |
++--------------+-------------+------+-----+---------+-------+
+| Company_name | varchar(20) | NO   | PRI | NULL    |       |
+| City         | varchar(20) | YES  |     | NULL    |       |
++--------------+-------------+------+-----+---------+-------+
+
+ DESCRIBE Manages;
++--------------+-------------+------+-----+---------+-------+
+| Field        | Type        | Null | Key | Default | Extra |
++--------------+-------------+------+-----+---------+-------+
+| Emp_name     | varchar(20) | YES  | MUL | NULL    |       |
+| Manager_name | varchar(20) | NO   | PRI | NULL    |       |
++--------------+-------------+------+-----+---------+-------+
+
+//INSERTING VALUES
+
+INSERT INTO Employee VALUES('E1001', 'RAHA', 'FC ROAD', 'PUNE');
+INSERT INTO Employee VALUES('E1002', 'ANVI', 'HILL ROAD', 'MUMBAI');
+INSERT INTO Employee VALUES('E1003', 'JANYA', 'SAROJINI', 'DELHI');
+INSERT INTO Employee VALUES('E1004', 'NAIRA', 'MG ROAD', 'BANGLORE');
+INSERT INTO Employee VALUES('E1005', 'MIESHA', 'CAMP', 'PUNE');
+
+INSERT INTO Company VALUES( 'INFOSYS', 'BANGLORE');
+INSERT INTO Company VALUES( 'TCS', 'PUNE');
+INSERT INTO Company VALUES('META', 'DELHI');
+INSERT INTO Company VALUES('GOOGLE', 'MUMBAI');
+INSERT INTO Company VALUES('APPLE', 'PUNE');
+
+INSERT INTO Works VALUES( 'RAHA', 'INFOSYS', 10000);
+INSERT INTO Works VALUES( 'ANVI', 'GOOGLE', 30000);
+INSERT INTO Works VALUES( 'JANYA', 'META',200000);
+INSERT INTO Works VALUES( 'NAIRA', 'APPLE', 45000);
+INSERT INTO Works VALUES( 'MIESHA', 'TCS', 90000);
+
+INSERT INTO Manages VALUES( 'RAHA', 'NIKHIL DESAI');
+INSERT INTO Manages VALUES('ANVI', 'ANAND TIWARI');
+INSERT INTO Manages VALUES('JANYA', 'AFSA SHAIKH');
+INSERT INTO Manages VALUES('NAIRA', 'MANISH PATEL');
+INSERT INTO Manages VALUES('MIESHA', 'VIJAY SHARMA');
+
+//
+
+SELECT* FROM Employee;
++--------+----------+-----------+----------+
+| Emp_id | Emp_name | Street    | City     |
++--------+----------+-----------+----------+
+| E1001  | RAHA     | FC ROAD   | PUNE     |
+| E1002  | ANVI     | HILL ROAD | MUMBAI   |
+| E1003  | JANYA    | SAROJINI  | DELHI    |
+| E1004  | NAIRA    | MG ROAD   | BANGLORE |
+| E1005  | MIESHA   | CAMP      | PUNE     |
++--------+----------+-----------+----------+
+
+SELECT* FROM Works;
++----------+--------------+--------+
+| Emp_name | Company_name | Salary |
++----------+--------------+--------+
+| ANVI     | GOOGLE       |  30000 |
+| JANYA    | META         | 200000 |
+| MIESHA   | TCS          |  90000 |
+| NAIRA    | APPLE        |  45000 |
+| RAHA     | INFOSYS      |  10000 |
++----------+--------------+--------+
+
+SELECT* FROM Company;
++--------------+----------+
+| Company_name | City     |
++--------------+----------+
+| APPLE        | PUNE     |
+| GOOGLE       | MUMBAI   |
+| INFOSYS      | BANGLORE |
+| META         | DELHI    |
+| TCS          | PUNE     |
++--------------+----------+
+
+SELECT* FROM Manages;
++----------+--------------+
+| Emp_name | Manager_name |
++----------+--------------+
+| ANVI     | ANAND TIWARI |
+| JANYA    | AFSA SHAIKH  |
+| MIESHA   | VIJAY SHARMA |
+| NAIRA    | MANISH PATEL |
+| RAHA     | NIKHIL DESAI |
++----------+--------------+
+
+QUERIES:
+
+1)Find the names of all employees who work for "TCS".
+mysql>SELECT Emp_name FROM Works WHERE Company_name="TCS";
++----------+
+| Emp_name |
++----------+
+| MIESHA   |
++----------+
+
+2)Find the names and company names of all employees sorted in ascending order of company name and descending order of employee 
+names of that company.
+mysql> SELECT Emp_name, Company_name FROM Works ORDER BY Company_name ASC, Emp_name DESC;
++----------+--------------+
+| Emp_name | Company_name |
++----------+--------------+
+| NAIRA    | APPLE        |
+| ANVI     | GOOGLE       |
+| RAHA     | INFOSYS      |
+| JANYA    | META         |
+| MIESHA   | TCS          |
++----------+--------------+
+
+3)Change the city of employee working with InfoSys to "Bangalore".
+mysql> UPDATE Company SET City="BANGLORE" WHERE Company_name ="INFOSYS";
+Query OK, 0 rows affected (0.00 sec)
+Rows matched: 1  Changed: 0  Warnings: 0
+
+
+
+4)Find the names, street address, and cities of residence for all employees who work for 'TechM' and earn more than $10,000.
+mysql>SELECT E.Emp_name, E.Street, E.City FROM Employee E INNER JOIN Works W ON E.Emp_name=W.Emp_name WHERE W.Company_name="GOOGLE" AND W.Salary>10000;
++----------+-----------+--------+
+| Emp_name | Street    | City   |
++----------+-----------+--------+
+| ANVI     | HILL ROAD | MUMBAI |
++----------+-----------+--------+
+
+5)Add Column Asset to Company table.
+ALTER TABLE Company ADD Asset INTEGER;
+Query OK, 0 rows affected (0.07 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> DESCRIBE Company;
++--------------+-------------+------+-----+---------+-------+
+| Field        | Type        | Null | Key | Default | Extra |
++--------------+-------------+------+-----+---------+-------+
+| Company_name | varchar(20) | NO   | PRI | NULL    |       |
+| City         | varchar(20) | YES  |     | NULL    |       |
+| Asset        | int         | YES  |     | NULL    |       |
++--------------+-------------+------+-----+---------+-------+
+
+6)Find the names of all employees who earn more than the average salary of all employees of their company. Assume that all 
+people work for at most one company.
+ mysql>SELECT Emp_name FROM Works WHERE Salary>(SELECT AVG(Salary) FROM Works);
++----------+
+| Emp_name |
++----------+
+| JANYA    |
+| MIESHA   |
++----------+
+
+
+7)Change name of table Manages to Management.
+mysql> ALTER TABLE Manages RENAME Management;
+Query OK, 0 rows affected (0.07 sec)
+
+mysql> DESCRIBE Manages;
+ERROR 1146 (42S02): Table 'mescoe.manages' doesn't exist
+mysql> DESCRIBE Management;
++--------------+-------------+------+-----+---------+-------+
+| Field        | Type        | Null | Key | Default | Extra |
++--------------+-------------+------+-----+---------+-------+
+| Emp_name     | varchar(20) | YES  | MUL | NULL    |       |
+| Manager_name | varchar(20) | NO   | PRI | NULL    |       |
++--------------+-------------+------+-----+---------+-------+
+
+8)Create Simple and Unique index on employee table.
+
+mysql> CREATE INDEX EmpIdx ON Employee(Emp_id);
+Query OK, 0 rows affected (0.08 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> CREATE UNIQUE INDEX UnEmpIdx ON Employee(Emp_id);
+Query OK, 0 rows affected (0.08 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+9)Display index Information
+
+mysql> SHOW INDEX FROM Employee;
++----------+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+---------+------------+
+| Table    | Non_unique | Key_name | Seq_in_index | Column_name | Collation | Cardinality | Sub_part | Packed | Null | Index_type | Comment | Index_comment | Visible | Expression |
++----------+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+---------+------------+
+| employee |          0 | PRIMARY  |            1 | Emp_id      | A         |           5 |     NULL |   NULL |      | BTREE      |         |               | YES     | NULL       |
+| employee |          0 | UnEmpIdx |            1 | Emp_id      | A         |           5 |     NULL |   NULL |      | BTREE      |         |               | YES     | NULL       |
+| employee |          1 | EmpIdx   |            1 | Emp_id      | A         |           5 |     NULL |   NULL |      | BTREE      |         |               | YES     | NULL       |
++----------+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+---------+------------+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
