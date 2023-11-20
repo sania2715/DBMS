@@ -1,0 +1,84 @@
+Design MongoDB database and perform following Map reduceoperation:
+Create Employee collection by considering following Fields: 
+i. Name: Embedded Doc (FName, LName)
+ii. Company Name: String 
+iii. Salary: Number
+iv. Designation: String
+v. Age: Number
+vi. Expertise: Array 
+vii. DOB: String or Date
+viii. Email id: String
+ix. Contact: String 
+x. Address: Array of Embedded Doc (PAddr, LAddr)
+Execute the following query:
+
+1)Display the total salary of per company
+
+Empdb>var mapFunction = function(){emit (this.Company, this.Salary);}; 
+var reduceFunction=function(key, values){return Array.sum(values);};
+Empdb> db.Empdb.mapReduce(mapFunction, reduceFunction,{out: "total_salary_per_company"});
+{ result: 'total_salary_per_company', ok: 1 }
+Empdb> db.total_salary_per_company.find()
+[
+  { _id: 'Facebook', value: 16000 },
+  { _id: 'Meta', value: 105000 },
+  { _id: 'TCS', value: 62000 },
+  { _id: 'Google', value: 100000 },
+  { _id: 'Infosys', value: 130000 },
+  { _id: 'Apple', value: 200000 }
+]
+----------------------------------------------------------------------------------------------------------------------------------------
+2)Display the total salary of company Name:"TCS"
+
+Empdb> var mapFunction = function(){if(this.Company=="TCS"){ emit(this.Company, this.Salary);}};
+var reduceFunction=function(key,values){return Array.sum(values);};
+
+Empdb> db.Empdb.mapReduce(mapFunction, reduceFunction,{query:{Company:"TCS"},out:"total_salary_TCS"});
+{ result: 'total_salary_TCS', ok: 1 }
+Empdb> db.total_salary_TCS.find()
+[ { _id: 'TCS', value: 62000 } ]
+
+---------------------------------------------------------------------------------------------------------------------------------------
+3)Return the average salary of company whose address is “Pune".
+
+Empdb> var mapFunction= function(){this.Address.forEach(function(addr){ if(addr.PAddr="Pune"){emit(this.Company, this.Salary);}});}; 
+var reduceFunction=function(key,values){var total_salary=Array.sum(values); var count=values.length; return total_salary/count;}
+
+Empdb> db.Empdb.mapReduce(mapFunction, reduceFunction, {out:"average_salary_pune"});
+{ result: 'average_salary_pune', ok: 1 }
+
+Empdb> db.average_salary_pune.find()
+[ { _id: null, value: NaN } ]
+
+---------------------------------------------------------------------------------------------------------------------------------------
+4)Display total count for “City=Pune”
+
+Empdb> var mapFunction=function(){this.Address.forEach(function(addr){emit(addr.PAddr,1);});}; 
+var reduceFunction=function(key,values){return Array.sum(values);};
+
+Empdb> db.Empdb.mapReduce(mapFunction, reduceFunction, {out:"total_count_Pune"});
+{ result: 'total_count_Pune', ok: 1 }
+Empdb> db.total_count_Pune.find()
+[
+  { _id: { City: 'Delhi', Pin: 411099 }, value: 1 },
+  { _id: { City: 'Mumbai', Pin: 411050 }, value: 1 },
+  { _id: { City: 'Belgaum', Pin: 511026 }, value: 1 },
+  { _id: { City: 'Kochi', Pin: 711026 }, value: 1 },
+  { _id: { City: 'Lucknow', Pin: 220061 }, value: 1 },
+  { _id: { City: 'Miraj', Pin: 416410 }, value: 1 },
+  { _id: { City: 'Pune', Pin: 411067 }, value: 1 },
+  { _id: { City: 'Pune', Pin: 411026 }, value: 1 },
+  { _id: { City: 'Chandigarh', Pin: 160011 }, value: 1 },
+  { _id: { City: 'Banglore', Pin: 560004 }, value: 1 }
+]
+---------------------------------------------------------------------------------------------------------------------------------------
+5)Return count for city pune and age greater than 20.
+
+Empdb>var mapFunction=function(){if(this.Age>20){this.Address.forEach(function(addr){if(addr.PAddr=="Pune"){emit("Pune", 1);}});}};
+var reduceFunction=function(key,values){return Array.sum(values);};
+
+Empdb> db.Empdb.mapReduce(mapFunction, reduceFunction,{out:"count_age_pune_20"});
+{ result: 'count_age_pune_20', ok: 1 }
+Empdb> db.count_age_pune_20.find()
+
+
