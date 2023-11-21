@@ -1,0 +1,729 @@
+Design and Develop MongoDB Queries using CRUD operations:
+Create Employee collection by considering following Fields: 
+i. Name: Embedded Doc (FName, LName)
+ii. Company Name: String 
+iii. Salary: Number
+iv. Designation: String
+v. Age: Number
+vi. Expertise: Array 
+vii. DOB: String or Date
+viii. Email id: String
+ix. Contact: String 
+x. Address: Array of Embedded Doc (PAddr, LAddr)
+
+//IMPLEMENTING QUERIES
+
+
+//Mongo db properly 
+CRUD OPERATIONS 
+
+1)Select all documents where the Designation field has the value "Programmer" and the value of the salary field is greater than 30000.
+db.Empdb.find({Designation:"Programmer", Salary:{$gt:30000}})
+
+[
+  {
+    _id: ObjectId("65545db034a6c376fda11cf0"),
+    Empid: 6,
+    Name: { FName: 'Neha', LName: 'Walimbe' },
+    Company: 'Google',
+    Salary: 80000,
+    Designation: 'Programmer',
+    Age: 20,
+    Expertise: [ 'Python', 'Java', 'C++' ],
+    DOB: '14-05-2003',
+    Email: 'nehawalimbe@gmail.com',
+    Contact: '8667654321',
+    Address: [
+      {
+        PAddr: { City: 'Pune', Pin: 411067 },
+        LAddr: { City: 'Mumbai', Pin: 410070 }
+      }
+    ]
+  }
+]
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2)Creates a new document if no document in the employee collection contains {Designation: "Tester", Company_name: "TCS", Age: 25}
+
+Empdb> db.Empdb.updateOne({Designation:"Tester", Company:"TCS"},{$set:{ Age:25}}, {upsert:true})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+3)Increase salary of each Employee working with “Infosys" 10000.
+Empdb> db.Empdb.update({Company:"Infosys"} , {$inc:{Salary:10000}}, {multi:true})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 2,
+  modifiedCount: 2,
+  upsertedCount: 0
+}
+Empdb> db.Empdb.find( {Company:"Infosys"})
+[
+  {
+    _id: ObjectId("65545d9f34a6c376fda11cee"),
+    Empid: 4,
+    Name: { FName: 'Siddhi', LName: 'Suryawanshi' },
+    Company: 'Infosys',
+    Salary: 100000,
+    Designation: 'Developer',
+    Age: 21,
+    Expertise: [ 'Mysql', 'Mongodb' ],
+    DOB: '02-06-2002',
+    Email: 'siddsunsurya@gmail.com',
+    Contact: '8790564566',
+    Address: [
+      {
+        PAddr: { City: 'Belgaum', Pin: 511026 },
+        LAddr: { City: 'Belgaum', Pin: 511026 }
+      }
+    ]
+  },
+  {
+    _id: ObjectId("65545dd734a6c376fda11cf4"),
+    Empid: 10,
+    Name: { FName: 'Mithun', LName: 'Desai' },
+    Company: 'Infosys',
+    Salary: 50000,
+    Designation: 'Tester',
+    Age: 25,
+    Expertise: [ 'HTML', 'CSS' ],
+    DOB: '15-12-2005',
+    Email: 'nairmithun11@gmail.com',
+    Contact: '7898600543',
+    Address: [
+      {
+        PAddr: { City: 'Kochi', Pin: 711026 },
+        LAddr: { City: 'Pune', Pin: 411001 }
+      }
+    ]
+  }
+]
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+4)Finds all employees working with "TCS" and reduce their salary by 5000.
+
+Empdb>  db.Empdb.updateMany({Company:"TCS"}, {$inc:{Salary:-5000}}, {multi:true})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 2,
+  modifiedCount: 2,
+  upsertedCount: 0
+}
+Empdb> db.Empdb.find({Company:"TCS"})
+[
+  {
+    _id: ObjectId("65545d9534a6c376fda11ced"),
+    Empid: 3,
+    Name: { FName: 'Megha', LName: 'Nair' },
+    Company: 'TCS',
+    Salary: 37000,
+    Designation: 'Tester',
+    Age: 25,
+    Expertise: [ 'Java', 'Cassandra' ],
+    DOB: '10-10-2003',
+    Email: 'nair2megha@gmail.com',
+    Contact: '9878906572',
+    Address: [
+      {
+        PAddr: { City: 'Delhi', Pin: 411099 },
+        LAddr: { City: 'Nagpur', Pin: 440024 }
+      }
+    ]
+  },
+  {
+    _id: ObjectId("65545dcf34a6c376fda11cf3"),
+    Empid: 9,
+    Name: { FName: 'Shayaan', LName: 'Pasha' },
+    Company: 'TCS',
+    Salary: 5000,
+    Designation: 'Programmer',
+    Age: 23,
+    Expertise: [ 'Python', 'Mysql' ],
+    DOB: '11-07-2002',
+    Email: 'shayaanpasha@gmail.com',
+    Contact: '7890567809',
+    Address: [
+      {
+        PAddr: { City: 'Banglore', Pin: 560004 },
+        LAddr: { City: 'Mumbai', Pin: 4110011 }
+      }
+    ]
+  }
+]
+
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+5) Return documents where Designation is not equal to "Tester".
+
+db.Empdb.find({Designation:{$ne:"Tester"}})
+
+[
+  {
+    _id: ObjectId("65545d7934a6c376fda11ceb"),
+    Empid: 1,
+    Name: { FName: 'Sania', LName: 'Nidagundi' },
+    Company: 'Google',
+    Salary: 20000,
+    Designation: 'Developer',
+    Age: 20,
+    Expertise: [ 'Python', 'C++' ],
+    DOB: '27-05-2003',
+    Email: 'nidagundisania@gmail.com',
+    Contact: '8668278340',
+    Address: [
+      {
+        PAddr: { City: 'Pune', Pin: 411026 },
+        LAddr: { City: 'Pune', Pin: 411026 }
+      }
+    ]
+  },
+  {
+    _id: ObjectId("65545d8a34a6c376fda11cec"),
+    Empid: 2,
+    Name: { FName: 'Ridhi', LName: 'Mali' },
+    Company: 'Meta',
+    Salary: 35000,
+    Designation: 'Designer',
+    Age: 23,
+    Expertise: [ 'Canva', 'UI/UX' ],
+    DOB: '25-07-2004',
+    Email: 'ridhimali11@gmail.com',
+    Contact: '9078563412',
+    Address: [
+      {
+        PAddr: { City: 'Mumbai', Pin: 411050 },
+        LAddr: { City: 'Pune', Pin: 411027 }
+      }
+    ]
+  },
+  {
+    _id: ObjectId("65545d9f34a6c376fda11cee"),
+    Empid: 4,
+    Name: { FName: 'Siddhi', LName: 'Suryawanshi' },
+    Company: 'Infosys',
+    Salary: 100000,
+    Designation: 'Developer',
+    Age: 21,
+    Expertise: [ 'Mysql', 'Mongodb' ],
+    DOB: '02-06-2002',
+    Email: 'siddsunsurya@gmail.com',
+    Contact: '8790564566',
+    Address: [
+      {
+        PAddr: { City: 'Belgaum', Pin: 511026 },
+        LAddr: { City: 'Belgaum', Pin: 511026 }
+      }
+    ]
+  },
+  {
+    _id: ObjectId("65545da734a6c376fda11cef"),
+    Empid: 5,
+    Name: { FName: 'Vineeta', LName: 'Yadav' },
+    Company: 'Facebook',
+    Salary: 16000,
+    Designation: 'Programmer',
+    Age: 24,
+    Expertise: [ 'Mongodb', 'Ruby' ],
+    DOB: '11-06-2004',
+    Email: 'yadav22@gmail.com',
+    Contact: '8776905090',
+    Address: [
+      {
+        PAddr: { City: 'Lucknow', Pin: 220061 },
+        LAddr: { City: 'Surat', Pin: 335009 }
+      }
+    ]
+  },
+  {
+    _id: ObjectId("65545db034a6c376fda11cf0"),
+    Empid: 6,
+    Name: { FName: 'Neha', LName: 'Walimbe' },
+    Company: 'Google',
+    Salary: 80000,
+    Designation: 'Programmer',
+    Age: 20,
+    Expertise: [ 'Python', 'Java', 'C++' ],
+    DOB: '14-05-2003',
+    Email: 'nehawalimbe@gmail.com',
+    Contact: '8667654321',
+    Address: [
+      {
+        PAddr: { City: 'Pune', Pin: 411067 },
+        LAddr: { City: 'Mumbai', Pin: 410070 }
+      }
+    ]
+  },
+  {
+    _id: ObjectId("65545dc334a6c376fda11cf2"),
+    Empid: 8,
+    Name: { FName: 'Tamanna', LName: 'Gupta' },
+    Company: 'Apple',
+    Salary: 200000,
+    Designation: 'Designer',
+    Age: 26,
+    Expertise: [ 'Figma', 'Adobe' ],
+    DOB: '14-02-2002',
+    Email: 'tamannaa@gmail.com',
+    Contact: '9088765431',
+    Address: [
+      {
+        PAddr: { City: 'Chandigarh', Pin: 160011 },
+        LAddr: { City: 'Pune', Pin: 411028 }
+      }
+    ]
+  },
+  {
+    _id: ObjectId("65545dcf34a6c376fda11cf3"),
+    Empid: 9,
+    Name: { FName: 'Shayaan', LName: 'Pasha' },
+    Company: 'TCS',
+    Salary: 5000,
+    Designation: 'Programmer',
+    Age: 23,
+    Expertise: [ 'Python', 'Mysql' ],
+    DOB: '11-07-2002',
+    Email: 'shayaanpasha@gmail.com',
+    Contact: '7890567809',
+    Address: [
+      {
+        PAddr: { City: 'Banglore', Pin: 560004 },
+        LAddr: { City: 'Mumbai', Pin: 4110011 }
+      }
+    ]
+  }
+]
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+6) Find all employee with Exact Match on an Array having Expertise: ['Mongodb','Mysql','Cassandra']
+
+db.Empdb.find({}, {Expertise:['Mysql', 'Mongodb', 'Cassandra']})
+
+Empdb> db.Empdb.find( {Expertise:['Mysql', 'Cassandra', 'Mongodb']})
+[
+  {
+    _id: ObjectId("65545dbc34a6c376fda11cf1"),
+    Empid: 7,
+    Name: { FName: 'Fiza', LName: 'Pasha' },
+    Company: 'Meta',
+    Salary: 70000,
+    Designation: 'Tester',
+    Age: 28,
+    Expertise: [ 'Mysql', 'Cassandra', 'Mongodb' ],
+    DOB: '04-04-2001',
+    Email: 'fizapasha2@gmail.com',
+    Contact: '9080765433',
+    Address: [
+      {
+        PAddr: { City: 'Miraj', Pin: 416410 },
+        LAddr: { City: 'Amravati', Pin: 444601 }
+      }
+    ]
+  }
+]
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+7)Final name of Employee where age is less than 30 and salary more than 50000.
+
+Empdb> db.Empdb.find({ Age:{$lt:30}, Salary:{$gt:50000}},{Name: {FName:1}})
+[
+  {
+    _id: ObjectId("65545d9f34a6c376fda11cee"),
+    Name: { FName: 'Siddhi' }
+  },
+  {
+    _id: ObjectId("65545db034a6c376fda11cf0"),
+    Name: { FName: 'Neha' }
+  },
+  {
+    _id: ObjectId("65545dbc34a6c376fda11cf1"),
+    Name: { FName: 'Fiza' }
+  },
+  {
+    _id: ObjectId("65545dc334a6c376fda11cf2"),
+    Name: { FName: 'Tamanna' }
+  }
+]
+
+Empdb> db.Empdb.find({ Age:{$lt:30}, Salary:{$gt:50000}},{Name: {FName:1}, Salary:1, Age:1})
+[
+  {
+    _id: ObjectId("65545d9f34a6c376fda11cee"),
+    Name: { FName: 'Siddhi' },
+    Salary: 100000,
+    Age: 21
+  },
+  {
+    _id: ObjectId("65545db034a6c376fda11cf0"),
+    Name: { FName: 'Neha' },
+    Salary: 80000,
+    Age: 20
+  },
+  {
+    _id: ObjectId("65545dbc34a6c376fda11cf1"),
+    Name: { FName: 'Fiza' },
+    Salary: 70000,
+    Age: 28
+  },
+  {
+    _id: ObjectId("65545dc334a6c376fda11cf2"),
+    Name: { FName: 'Tamanna' },
+    Salary: 200000,
+    Age: 26
+  }
+]
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+8)Selects all documents in the collection where the field age has a value less than 30 or the value of the salary field is greater than 40000. 
+Empdb> db.Empdb.find({Age:{$lt:30} , Salary:{$gt:40000}})
+[
+  {
+    _id: ObjectId("65545d9f34a6c376fda11cee"),
+    Empid: 4,
+    Name: { FName: 'Siddhi', LName: 'Suryawanshi' },
+    Company: 'Infosys',
+    Salary: 100000,
+    Designation: 'Developer',
+    Age: 21,
+    Expertise: [ 'Mysql', 'Mongodb' ],
+    DOB: '02-06-2002',
+    Email: 'siddsunsurya@gmail.com',
+    Contact: '8790564566',
+    Address: [
+      {
+        PAddr: { City: 'Belgaum', Pin: 511026 },
+        LAddr: { City: 'Belgaum', Pin: 511026 }
+      }
+    ]
+  },
+  {
+    _id: ObjectId("65545db034a6c376fda11cf0"),
+    Empid: 6,
+    Name: { FName: 'Neha', LName: 'Walimbe' },
+    Company: 'Google',
+    Salary: 80000,
+    Designation: 'Programmer',
+    Age: 20,
+    Expertise: [ 'Python', 'Java', 'C++' ],
+    DOB: '14-05-2003',
+    Email: 'nehawalimbe@gmail.com',
+    Contact: '8667654321',
+    Address: [
+      {
+        PAddr: { City: 'Pune', Pin: 411067 },
+        LAddr: { City: 'Mumbai', Pin: 410070 }
+      }
+    ]
+  },
+  {
+    _id: ObjectId("65545dbc34a6c376fda11cf1"),
+    Empid: 7,
+    Name: { FName: 'Fiza', LName: 'Pasha' },
+    Company: 'Meta',
+    Salary: 70000,
+    Designation: 'Tester',
+    Age: 28,
+    Expertise: [ 'Mysql', 'Cassandra', 'Mongodb' ],
+    DOB: '04-04-2001',
+    Email: 'fizapasha2@gmail.com',
+    Contact: '9080765433',
+    Address: [
+      {
+        PAddr: { City: 'Miraj', Pin: 416410 },
+        LAddr: { City: 'Amravati', Pin: 444601 }
+      }
+    ]
+  },
+  {
+    _id: ObjectId("65545dc334a6c376fda11cf2"),
+    Empid: 8,
+    Name: { FName: 'Tamanna', LName: 'Gupta' },
+    Company: 'Apple',
+    Salary: 200000,
+    Designation: 'Designer',
+    Age: 26,
+    Expertise: [ 'Figma', 'Adobe' ],
+    DOB: '14-02-2002',
+    Email: 'tamannaa@gmail.com',
+    Contact: '9088765431',
+    Address: [
+      {
+        PAddr: { City: 'Chandigarh', Pin: 160011 },
+        LAddr: { City: 'Pune', Pin: 411028 }
+      }
+    ]
+  },
+  {
+    _id: ObjectId("65545dd734a6c376fda11cf4"),
+    Empid: 10,
+    Name: { FName: 'Mithun', LName: 'Desai' },
+    Company: 'Infosys',
+    Salary: 50000,
+    Designation: 'Tester',
+    Age: 25,
+    Expertise: [ 'HTML', 'CSS' ],
+    DOB: '15-12-2005',
+    Email: 'nairmithun11@gmail.com',
+    Contact: '7898600543',
+    Address: [
+      {
+        PAddr: { City: 'Kochi', Pin: 711026 },
+        LAddr: { City: 'Pune', Pin: 411001 }
+      }
+    ]
+  }
+]
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+9)Find documents where Designation is not equal to "Developer".
+
+db.Empdb.find({Designation:{$ne:"Developer}})
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+10)Find _id, Designation, Address and Name from all documents where Company_name is "Infosys".
+Empdb> db.Empdb.find({Company:"Infosys"}, {_id:0, Designation:1, Address:1, Name:1})
+[
+  {
+    Name: { FName: 'Siddhi', LName: 'Suryawanshi' },
+    Designation: 'Developer',
+    Address: [
+      {
+        PAddr: { City: 'Belgaum', Pin: 511026 },
+        LAddr: { City: 'Belgaum', Pin: 511026 }
+      }
+    ]
+  },
+  {
+    Name: { FName: 'Mithun', LName: 'Desai' },
+    Designation: 'Tester',
+    Address: [
+      {
+        PAddr: { City: 'Kochi', Pin: 711026 },
+        LAddr: { City: 'Pune', Pin: 411001 }
+      }
+    ]
+  }
+]
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+11)Display only FName and LName of all Employees
+
+Empdb> db.Empdb.find({},{Name: {FName:1, LName:1}})
+[
+  {
+    _id: ObjectId("65545d7934a6c376fda11ceb"),
+    Name: { FName: 'Sania', LName: 'Nidagundi' }
+  },
+  {
+    _id: ObjectId("65545d8a34a6c376fda11cec"),
+    Name: { FName: 'Ridhi', LName: 'Mali' }
+  },
+  {
+    _id: ObjectId("65545d9534a6c376fda11ced"),
+    Name: { FName: 'Megha', LName: 'Nair' }
+  },
+  {
+    _id: ObjectId("65545d9f34a6c376fda11cee"),
+    Name: { FName: 'Siddhi', LName: 'Suryawanshi' }
+  },
+  {
+    _id: ObjectId("65545da734a6c376fda11cef"),
+    Name: { FName: 'Vineeta', LName: 'Yadav' }
+  },
+  {
+    _id: ObjectId("65545db034a6c376fda11cf0"),
+    Name: { FName: 'Neha', LName: 'Walimbe' }
+  },
+  {
+    _id: ObjectId("65545dbc34a6c376fda11cf1"),
+    Name: { FName: 'Fiza', LName: 'Pasha' }
+  },
+  {
+    _id: ObjectId("65545dc334a6c376fda11cf2"),
+    Name: { FName: 'Tamanna', LName: 'Gupta' }
+  },
+  {
+    _id: ObjectId("65545dcf34a6c376fda11cf3"),
+    Name: { FName: 'Shayaan', LName: 'Pasha' }
+  },
+  {
+    _id: ObjectId("65545dd734a6c376fda11cf4"),
+    Name: { FName: 'Mithun', LName: 'Desai' }
+  }
+]
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+12)Finds all employees working with Company_name: "TCS" and increase their salary by 2000.
+
+Empdb> db.Empdb.updateMany({Company:"TCS"}, {$inc:{Salary:2000}})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 2,
+  modifiedCount: 2,
+  upsertedCount: 0
+}
+Empdb> db.Empdb.find({Company:"TCS"})
+[
+  {
+    _id: ObjectId("65545d9534a6c376fda11ced"),
+    Empid: 3,
+    Name: { FName: 'Megha', LName: 'Nair' },
+    Company: 'TCS',
+    Salary: 47000,
+    Designation: 'Tester',
+    Age: 25,
+    Expertise: [ 'Java', 'Cassandra' ],
+    DOB: '10-10-2003',
+    Email: 'nair2megha@gmail.com',
+    Contact: '9878906572',
+    Address: [
+      {
+        PAddr: { City: 'Delhi', Pin: 411099 },
+        LAddr: { City: 'Nagpur', Pin: 440024 }
+      }
+    ]
+  },
+  {
+    _id: ObjectId("65545dcf34a6c376fda11cf3"),
+    Empid: 9,
+    Name: { FName: 'Shayaan', LName: 'Pasha' },
+    Company: 'TCS',
+    Salary: 7000,
+    Designation: 'Programmer',
+    Age: 23,
+    Expertise: [ 'Python', 'Mysql' ],
+    DOB: '11-07-2002',
+    Email: 'shayaanpasha@gmail.com',
+    Contact: '7890567809',
+    Address: [
+      {
+        PAddr: { City: 'Banglore', Pin: 560004 },
+        LAddr: { City: 'Mumbai', Pin: 4110011 }
+      }
+    ]
+  }
+]
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+13)Matches all documents where the value of the field Address is an embedded document that contains only the field city with the value "Pune" and 
+the field Pin_code with the value "411001".
+
+db.Empdb.find( {"Address.PAddr":"Pune"," Address.Pin":"411001"})
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+14)Find employee details who are working as "Developer" or "Tester".
+
+Empdb> db.Empdb.find({$or:[{Designation:"Developer"},{Designation:"Tester"}]})
+[
+  {
+    _id: ObjectId("65545d7934a6c376fda11ceb"),
+    Empid: 1,
+    Name: { FName: 'Sania', LName: 'Nidagundi' },
+    Company: 'Google',
+    Salary: 20000,
+    Designation: 'Developer',
+    Age: 20,
+    Expertise: [ 'Python', 'C++' ],
+    DOB: '27-05-2003',
+    Email: 'nidagundisania@gmail.com',
+    Contact: '8668278340',
+    Address: [
+      {
+        PAddr: { City: 'Pune', Pin: 411026 },
+        LAddr: { City: 'Pune', Pin: 411026 }
+      }
+    ]
+  },
+  {
+    _id: ObjectId("65545d9534a6c376fda11ced"),
+    Empid: 3,
+    Name: { FName: 'Megha', LName: 'Nair' },
+    Company: 'TCS',
+    Salary: 47000,
+    Designation: 'Tester',
+    Age: 25,
+    Expertise: [ 'Java', 'Cassandra' ],
+    DOB: '10-10-2003',
+    Email: 'nair2megha@gmail.com',
+    Contact: '9878906572',
+    Address: [
+      {
+        PAddr: { City: 'Delhi', Pin: 411099 },
+        LAddr: { City: 'Nagpur', Pin: 440024 }
+      }
+    ]
+  },
+  {
+    _id: ObjectId("65545d9f34a6c376fda11cee"),
+    Empid: 4,
+    Name: { FName: 'Siddhi', LName: 'Suryawanshi' },
+    Company: 'Infosys',
+    Salary: 100000,
+    Designation: 'Developer',
+    Age: 21,
+    Expertise: [ 'Mysql', 'Mongodb' ],
+    DOB: '02-06-2002',
+    Email: 'siddsunsurya@gmail.com',
+    Contact: '8790564566',
+    Address: [
+      {
+        PAddr: { City: 'Belgaum', Pin: 511026 },
+        LAddr: { City: 'Belgaum', Pin: 511026 }
+      }
+    ]
+  },
+  {
+    _id: ObjectId("65545dbc34a6c376fda11cf1"),
+    Empid: 7,
+    Name: { FName: 'Fiza', LName: 'Pasha' },
+    Company: 'Meta',
+    Salary: 70000,
+    Designation: 'Tester',
+    Age: 28,
+    Expertise: [ 'Mysql', 'Cassandra', 'Mongodb' ],
+    DOB: '04-04-2001',
+    Email: 'fizapasha2@gmail.com',
+    Contact: '9080765433',
+    Address: [
+      {
+        PAddr: { City: 'Miraj', Pin: 416410 },
+        LAddr: { City: 'Amravati', Pin: 444601 }
+      }
+    ]
+  },
+  {
+    _id: ObjectId("65545dd734a6c376fda11cf4"),
+    Empid: 10,
+    Name: { FName: 'Mithun', LName: 'Desai' },
+    Company: 'Infosys',
+    Salary: 50000,
+    Designation: 'Tester',
+    Age: 25,
+    Expertise: [ 'HTML', 'CSS' ],
+    DOB: '15-12-2005',
+    Email: 'nairmithun11@gmail.com',
+    Contact: '7898600543',
+    Address: [
+      {
+        PAddr: { City: 'Kochi', Pin: 711026 },
+        LAddr: { City: 'Pune', Pin: 411001 }
+      }
+    ]
+  }
+]
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+15)Drop Single documents where designation="Developer".
+
+db.Empdb.remove({Designation:"Developer"})
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+16)Count number of documents in employee collection.
+
+Empdb> db.Empdb.countDocuments()
+10
+
