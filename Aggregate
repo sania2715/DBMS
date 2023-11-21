@@ -1,0 +1,131 @@
+//Aggregation 
+
+
+1) Using aggregation Return Designation with Total Salary is Above 200000.
+
+db.Empdb.aggregate( { $group :{ _id : "$Designation",totalSal : { $sum : "$Salary"}}},{$match :
+{totalSal : { $lte : 200000 } } } )
+
+Empdb> db.Empdb.aggregate( { $group :{ _id : "$Designation",totalSal : { $sum : "$Salary"}}},{$match :
+{totalSal : { $lte : 200000 } } } )
+[
+  { _id: 'Tester', totalSal: 167000 },
+  { _id: 'Programmer', totalSal: 103000 },
+  { _id: 'Developer', totalSal: 120000 }
+]
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+2) Using Aggregate method returns names and _id in upper case and in alphabetical order.
+
+Empdb> db.Empdb.aggregate([{$sort:{Name:1}},{$project:{Name:{$toUpper:"$Name.FName"}}}])
+[
+  { _id: ObjectId("65545dbc34a6c376fda11cf1"), Name: 'FIZA' },
+  { _id: ObjectId("65545d9534a6c376fda11ced"), Name: 'MEGHA' },
+  { _id: ObjectId("65545dd734a6c376fda11cf4"), Name: 'MITHUN' },
+  { _id: ObjectId("65545db034a6c376fda11cf0"), Name: 'NEHA' },
+  { _id: ObjectId("65545d8a34a6c376fda11cec"), Name: 'RIDHI' },
+  { _id: ObjectId("65545d7934a6c376fda11ceb"), Name: 'SANIA' },
+  { _id: ObjectId("65545dcf34a6c376fda11cf3"), Name: 'SHAYAAN' },
+  { _id: ObjectId("65545d9f34a6c376fda11cee"), Name: 'SIDDHI' },
+  { _id: ObjectId("65545dc334a6c376fda11cf2"), Name: 'TAMANNA' },
+  { _id: ObjectId("65545da734a6c376fda11cef"), Name: 'VINEETA' }
+]
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+3) Using aggregation method find Employee with Total Salary for Each City with Designation="DBA".
+
+Empdb> db.Empdb.aggregate([{$match:{Designation:"Developer"}},{$group:{_id:"$Company", total:{$sum:"$Salary"}}}])
+[ { _id: 'Infosys', total: 100000 }, { _id: 'Google', total: 20000 } ](
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+4) Create Single Field Indexes on Designation field of employee collection
+Empdb> db.Empdb.createIndex({Designation:1})
+Designation_1
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+5) To Create Multikey Indexes on Expertise field of employee collection.
+Empdb> db.Empdb.ensureIndex({"Expertise.Mysql":1,"Expertise.Mongodb":1,"Expertise.Cassandra":1})
+[ 'Expertise.Mysql_1_Expertise.Mongodb_1_Expertise.Cassandra_1' ]
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+
+6)Create an Index on Emp_id field, compare the time require to search Emp_id before and after creating an index. (Hint Add at least 10000 Documents)
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+7) Return a List of Indexes on created on employee Collection.
+
+Empdb> db.Empdb.reIndex()
+{
+  nIndexesWas: 5,
+  nIndexes: 5,
+  indexes: [
+    { v: 2, key: { _id: 1 }, name: '_id_' },
+    { v: 2, key: { Name: 1 }, name: 'Name_1' },
+    { v: 2, key: { Name: 1, Age: -1 }, name: 'Name_1_Age_-1' },
+    { v: 2, key: { Designation: 1 }, name: 'Designation_1' },
+    {
+      v: 2,
+      key: {
+        'Expertise.Mysql': 1,
+        'Expertise.Mongodb': 1,
+        'Expertise.Cassandra': 1
+      },
+      name: 'Expertise.Mysql_1_Expertise.Mongodb_1_Expertise.Cassandra_1'
+    }
+  ],
+  ok: 1
+}
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+8)Using aggregation Return separates value in the Expertise array and return sum of each element of array.
+
+Empdb> db.Empdb.aggregate([{$group:{_id:"$Expertise"}}])
+[
+  { _id: [ 'Mysql', 'Cassandra', 'Mongodb' ] },
+  { _id: [ 'Python', 'C++' ] },
+  { _id: [ 'Mongodb', 'Ruby' ] },
+  { _id: [ 'Canva', 'UI/UX' ] },
+  { _id: [ 'Figma', 'Adobe' ] },
+  { _id: [ 'Java', 'Cassandra' ] },
+  { _id: [ 'Mysql', 'Mongodb' ] },
+  { _id: [ 'HTML', 'CSS' ] },
+  { _id: [ 'Python', 'Java', 'C++' ] },
+  { _id: [ 'Python', 'Mysql' ] }
+]
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+9)Using Aggregate method return Max and Min Salary for each company.
+
+Empdb> db.Empdb.aggregate([{$group:{_id:"$Company",minSalary:{$min:"$Salary"}}}])
+[
+  { _id: 'Meta', minSalary: 35000 },
+  { _id: 'TCS', minSalary: 7000 },
+  { _id: 'Infosys', minSalary: 50000 },
+  { _id: 'Facebook', minSalary: 16000 },
+  { _id: 'Google', minSalary: 20000 },
+  { _id: 'Apple', minSalary: 200000 }
+]
+Empdb> db.Empdb.aggregate([{$group:{_id:"$Company",maxSalary:{$max:"$Salary"}}}])
+[
+  { _id: 'Facebook', maxSalary: 16000 },
+  { _id: 'Meta', maxSalary: 70000 },
+  { _id: 'TCS', maxSalary: 47000 },
+  { _id: 'Infosys', maxSalary: 100000 },
+  { _id: 'Apple', maxSalary: 200000 },
+  { _id: 'Google', maxSalary: 80000 }
+]
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+10)Using aggregation method Return separates value in the Expertise array for employee name where Swapnil Jadhav
+Empdb> db.Empdb.aggregate([{$match:{"Name.FName":"Neha","Name.LName":"Walimbe"}},{$group:{_id:"$Expertise"}}])
+[ { _id: [ 'Python', 'Java', 'C++' ] } ]
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+11)To Create Compound Indexes on Name: 1, Age: -1
+
+Empdb> db.Empdb.createIndex({Name:1,Age:-1})
+Name_1_Age_-1
+
