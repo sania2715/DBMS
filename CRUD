@@ -719,7 +719,8 @@ Empdb> db.Empdb.find({$or:[{Designation:"Developer"},{Designation:"Tester"}]})
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 15)Drop Single documents where designation="Developer".
 
-db.Empdb.remove({Designation:"Developer"})
+Empdb> db.Empdb.deleteOne({Designation:"Developer"})
+{ acknowledged: true, deletedCount: 2 }
 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 16)Count number of documents in employee collection.
