@@ -32,11 +32,15 @@ Empdb> db.Empdb.aggregate([{$sort:{Name:1}},{$project:{Name:{$toUpper:"$Name.FNa
 ]
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------
-3) Using aggregation method find Employee with Total Salary for Each City with Designation="DBA".
+3) i)Using aggregation method find Employee with Total Salary for Each City with Designation="DBA".
 
 Empdb> db.Empdb.aggregate([{$match:{Designation:"Developer"}},{$group:{_id:"$Company", total:{$sum:"$Salary"}}}])
 [ { _id: 'Infosys', total: 100000 }, { _id: 'Google', total: 20000 } ](
 
+ii)Using aggregation method find Employee with Total Salary for Each City with Designation="DBA".
+
+Empdb> db.Empdb.aggregate([{$match:{Designation:"Programmer"}},{$group:{_id:"$Address.City",total:{$sum:"$salary"}}}])
+[ { _id: [], total: 0 } ]
 --------------------------------------------------------------------------------------------------------------------------------------------------------
 4) Create Single Field Indexes on Designation field of employee collection
 Empdb> db.Empdb.createIndex({Designation:1})
